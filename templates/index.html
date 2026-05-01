@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNIGRAPH | Assistant Intelligent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+
+    <div class="flex h-screen">
+        <aside class="w-64 bg-slate-900 text-white flex flex-col">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold tracking-tighter text-blue-400">UNIGRAPH</h1>
+                <p class="text-xs text-slate-400 uppercase tracking-widest">Master 1 Project</p>
+                <nav class="p-4 flex justify-between items-center">
+                    <a href="/admin" class="text-slate-400 hover:text-blue-500 text-sm transition-colors">
+                        <i class="fas fa-cog mr-1"></i> Administration
+                    </a>
+                </nav>
+            </div>
+            
+            <nav class="flex-1 px-4 space-y-2">
+                <div class="p-2 bg-slate-800 rounded-lg flex items-center gap-3 cursor-pointer">
+                    <i class="fas fa-comment-dots text-blue-400"></i>
+                    <span>Assistant IA</span>
+                </div>
+                <div onclick="toggleGraph()" class="p-2 hover:bg-slate-800 rounded-lg flex items-center gap-3 cursor-pointer transition">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Visualisation Graphe</span>
+                </div>
+            </nav>
+
+            <div class="p-4 border-t border-slate-800 text-[10px] text-slate-500">
+                © 2026 - Université Unigraph <br> Département d'Informatique
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <header class="h-16 bg-white border-b flex items-center justify-between px-8 shadow-sm">
+                <div class="flex items-center gap-2 text-slate-600">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <span class="text-sm font-medium">Système GraphRAG Connecté</span>
+                </div>
+                <div class="text-sm font-semibold text-slate-500">Groq Llama 3.3 / Neo4j</div>
+            </header>
+
+            <div id="chat-window" class="flex-1 overflow-y-auto p-6 space-y-4">
+                <div class="message-bubble gap-3 max-w-3xl">
+                    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs shrink-0">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-slate-100">
+                        Bonjour Sylvano. Je suis l'assistant Unigraph. Je peux répondre à vos questions sur les cours, les enseignants et les salles.
+                    </div>
+                </div>
+            </div>
+
+            <div id="graph-container" class="absolute inset-0 bg-white z-10 hidden flex flex-col">
+                <div class="p-4 border-b flex justify-between items-center bg-slate-50">
+                    <h2 class="font-bold">Visualisation du Réseau Unigraph</h2>
+                    <button onclick="toggleGraph()" class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-times-circle"></i> Fermer
+                    </button>
+                </div>
+                <div id="mynetwork" class="flex-1"></div>
+            </div>
+            <footer class="p-6 bg-white border-t">
+                <div class="max-w-4xl mx-auto flex gap-4">
+                    <input type="text" id="user-input" 
+                        class="flex-1 bg-slate-100 border-none rounded-xl px-6 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition" 
+                        placeholder="Posez votre question (ex: Qui enseigne le cours INF4038 ?)">
+                    <button id="send-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition shadow-lg shadow-blue-200">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <p class="text-center text-[10px] text-slate-400 mt-3 italic">
+                    Projet réalisé par l'équipe Master 1 - Option Systèmes Distribués
+                </p>
+            </footer>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

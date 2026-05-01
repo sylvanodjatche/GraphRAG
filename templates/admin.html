@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNIGRAPH | Administration Système</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .form-card { @apply bg-white p-6 rounded-xl shadow-sm border border-slate-200 transition-all hover:shadow-md; }
+        .input-field { @apply w-full border border-slate-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all; }
+        .btn-primary { @apply bg-blue-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans">
+
+    <nav class="bg-slate-900 text-white py-4 px-8 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2 rounded-lg">
+                    <i class="fas fa-database text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">UNIGRAPH <span class="text-blue-400">ADMIN</span></h1>
+                    <p class="text-[10px] uppercase tracking-widest text-slate-400">Panneau de Gestion Master 1</p>
+                </div>
+            </div>
+            <a href="/" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg transition-all border border-slate-700">
+                <i class="fas fa-arrow-left"></i> Retour au Chat
+            </a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-6 lg:p-8">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="md:col-span-2 bg-gradient-to-r from-blue-600 to-indigo-700 p-6 rounded-2xl text-white shadow-lg flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold">Bienvenue dans le centre de gestion</h2>
+                    <p class="text-blue-100 mt-1">Configurez les nœuds et les relations de votre graphe universitaire.</p>
+                </div>
+                <i class="fas fa-microchip text-5xl opacity-20"></i>
+            </div>
+            
+            <div class="bg-red-50 border border-red-100 p-6 rounded-2xl flex flex-col justify-center items-center text-center">
+                <h3 class="text-red-800 font-bold mb-2"><i class="fas fa-exclamation-triangle mr-2"></i>Réinitialisation</h3>
+                <button onclick="clearDB()" class="btn-danger-shake w-full bg-red-600 text-white px-4 py-3 rounded-xl font-bold hover:bg-red-700 transition-transform active:scale-95 shadow-lg shadow-red-200">
+                    VIDER LA BASE DE DONNÉES
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <section class="form-card">
+                <div class="flex items-center gap-3 mb-6 border-b pb-4">
+                    <i class="fas fa-chalkboard-teacher text-blue-600 text-xl"></i>
+                    <h3 class="text-lg font-bold text-slate-800">Gestion des Enseignants</h3>
+                </div>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Nom de famille</label>
+                            <input type="text" id="ens-nom" placeholder="Ex: TAPAMO" class="input-field">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Titre</label>
+                            <select id="ens-titre" class="input-field">
+                                <option value="Mr">Mr</option>
+                                <option value="Dr">Dr</option>
+                                <option value="Pr">Pr</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Grade Universitaire</label>
+                        <input type="text" id="ens-grade" placeholder="Ex: Chargé de Cours" class="input-field">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Email Institutionnel</label>
+                        <input type="email" id="ens-email" placeholder="nom@univ.cm" class="input-field">
+                    </div>
+                    <button onclick="addEnseignant()" class="btn-primary w-full mt-2">
+                        <i class="fas fa-user-plus"></i> Enregistrer l'Enseignant
+                    </button>
+                </div>
+            </section>
+
+            <section class="form-card border-l-4 border-l-blue-500">
+                <div class="flex items-center gap-3 mb-6 border-b pb-4">
+                    <i class="fas fa-book text-blue-600 text-xl"></i>
+                    <h3 class="text-lg font-bold text-slate-800">Nouveau Cours & Liaisons</h3>
+                </div>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Intitulé du Cours</label>
+                            <input type="text" id="crs-nom" placeholder="Ex: Algorithmique" class="input-field">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Code</label>
+                            <input type="text" id="crs-code" placeholder="INF101" class="input-field">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Niveau (M1/L3...)</label>
+                            <input type="text" id="crs-niveau" placeholder="M1" class="input-field">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Semestre (1/2)</label>
+                            <input type="number" id="crs-semestre" min="1" max="2" value="1" class="input-field">
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 bg-slate-50 rounded-xl border border-dashed border-slate-300 space-y-3">
+                        <p class="text-[10px] font-bold text-blue-600 uppercase italic">Liaisons automatiques</p>
+                        <input type="text" id="crs-filiere" placeholder="Nom de la Filière (Ex: ICT4D)" class="input-field !bg-white">
+                        <input type="text" id="crs-enseignant" placeholder="NOM de l'Enseignant (Ex: TAPAMO)" class="input-field !bg-white">
+                        <input type="text" id="crs-salle" placeholder="Nom de la Salle (Ex: AMPHI 500)" class="input-field !bg-white">
+                    </div>
+
+                    <button onclick="addCours()" class="btn-primary w-full bg-slate-800 hover:bg-slate-900 mt-2">
+                        <i class="fas fa-link"></i> Créer le Cours & Lier au Graphe
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <div id="toast" class="fixed bottom-8 right-8 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700">
+        <div id="toast-icon" class="text-green-400"><i class="fas fa-check-circle"></i></div>
+        <p id="toast-msg" class="text-sm font-medium"></p>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
