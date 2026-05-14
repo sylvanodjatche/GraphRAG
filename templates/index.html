@@ -3,87 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UNIGRAPH | Assistant Intelligent</title>
+    <title>UNIGRAPH | Assistant Académique</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
 </head>
-<body class="bg-slate-50 font-sans text-slate-900">
+<body>
 
-    <div class="flex h-screen">
-        <aside class="w-64 bg-slate-900 text-white flex flex-col">
-            <div class="p-6">
-                <h1 class="text-2xl font-bold tracking-tighter text-blue-400">UNIGRAPH</h1>
-                <p class="text-xs text-slate-400 uppercase tracking-widest">Master 1 Project</p>
-                <nav class="p-4 flex justify-between items-center">
-                    <a href="/admin" class="text-slate-400 hover:text-blue-500 text-sm transition-colors">
-                        <i class="fas fa-cog mr-1"></i> Administration
-                    </a>
-                </nav>
+<!-- ═══════════════════════════════════════════════════════
+     LAYOUT PRINCIPAL
+════════════════════════════════════════════════════════ -->
+<div class="app-shell">
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-mark">
+                <i class="fas fa-project-diagram"></i>
             </div>
-            
-            <nav class="flex-1 px-4 space-y-2">
-                <div class="p-2 bg-slate-800 rounded-lg flex items-center gap-3 cursor-pointer">
-                    <i class="fas fa-comment-dots text-blue-400"></i>
-                    <span>Assistant IA</span>
+            <div>
+                <h1 class="logo-text">UNI<span>GRAPH</span></h1>
+                <p class="logo-sub">Faculté des Sciences · UY1</p>
+            </div>
+        </div>
+
+        <!-- Barre de recherche suggestions -->
+        <div class="sidebar-search">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" placeholder="Recherche rapide..." id="sidebar-search-input" autocomplete="off">
+        </div>
+
+        <!-- Questions suggérées -->
+        <div class="sidebar-section">
+            <p class="section-label">Suggestions</p>
+            <div class="suggestions-list" id="suggestions-list">
+                <button class="suggestion-chip" onclick="askSuggestion('Qui dirige le département Informatique ?')">
+                    <i class="fas fa-crown"></i>
+                    <span>Chef du département Informatique</span>
+                </button>
+                <button class="suggestion-chip" onclick="askSuggestion('Quels cours sont enseignés en M1 ?')">
+                    <i class="fas fa-book-open"></i>
+                    <span>Cours de Master 1</span>
+                </button>
+                <button class="suggestion-chip" onclick="askSuggestion('Qui enseigne les bases de données ?')">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Prof de Bases de données</span>
+                </button>
+                <button class="suggestion-chip" onclick="askSuggestion('Quelles sont les filières disponibles ?')">
+                    <i class="fas fa-code-branch"></i>
+                    <span>Filières disponibles</span>
+                </button>
+                <button class="suggestion-chip" onclick="askSuggestion('Quelles spécialités existent en L3 ?')">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Spécialités en Licence 3</span>
+                </button>
+                <button class="suggestion-chip" onclick="askSuggestion('Qui sont les secrétaires du département ?')">
+                    <i class="fas fa-id-badge"></i>
+                    <span>Secrétaires du département</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats rapides -->
+        <div class="sidebar-section" id="quick-stats">
+            <p class="section-label">Graphe de connaissances</p>
+            <div class="stats-grid">
+                <div class="mini-stat">
+                    <span class="mini-stat-val" id="stat-dept">—</span>
+                    <span class="mini-stat-label">Départements</span>
                 </div>
-                <div onclick="toggleGraph()" class="p-2 hover:bg-slate-800 rounded-lg flex items-center gap-3 cursor-pointer transition">
+                <div class="mini-stat">
+                    <span class="mini-stat-val" id="stat-ens">—</span>
+                    <span class="mini-stat-label">Enseignants</span>
+                </div>
+                <div class="mini-stat">
+                    <span class="mini-stat-val" id="stat-ue">—</span>
+                    <span class="mini-stat-label">UE</span>
+                </div>
+                <div class="mini-stat">
+                    <span class="mini-stat-val" id="stat-etu">—</span>
+                    <span class="mini-stat-label">Étudiants</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="sidebar-section">
+            <p class="section-label">Navigation</p>
+            <button class="nav-action" onclick="toggleGraph()">
+                <i class="fas fa-project-diagram"></i>
+                <span>Visualiser le graphe</span>
+                <i class="fas fa-chevron-right ml-auto"></i>
+            </button>
+        </div>
+
+       <!-- Footer sidebar -->
+        <div class="sidebar-footer">
+            <div class="status-indicator">
+                <span class="dot dot-green"></span>
+                <span>GraphRAG connecté</span>
+            </div>
+            <div id="user-widget" class="user-widget hidden">
+                <img id="user-avatar" src="" alt="" class="user-avatar">
+                <div>
+                    <p id="user-display-name" class="user-name"></p>
+                    <button onclick="logout()" class="logout-btn">Déconnexion</button>
+                </div>
+            </div>
+            <!-- Lien dynamique : texte et href changent selon le statut admin -->
+            <a id="admin-link" class="admin-link" style="display: none;">
+                <i class="fas fa-shield-alt"></i>
+                <span id="admin-link-text">Administration</span>
+            </a>
+        </div>
+       
+    </aside>
+
+    <!-- ── ZONE PRINCIPALE ── -->
+    <main class="main-area">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <button class="menu-toggle" id="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="topbar-center">
+                <span class="topbar-title">Assistant Académique UNIGRAPH</span>
+            </div>
+            <div class="topbar-right">
+                <span class="tech-badge">
+                    <i class="fas fa-brain"></i> Groq Llama 3.3
+                </span>
+                <span class="tech-badge">
+                    <i class="fas fa-database"></i> Neo4j
+                </span>
+                <button class="clear-btn" onclick="clearChat()" title="Nouvelle conversation">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Fenêtre de chat -->
+        <div class="chat-window" id="chat-window">
+
+            <!-- Message de bienvenue -->
+            <div class="welcome-screen" id="welcome-screen">
+                <div class="welcome-logo">
                     <i class="fas fa-project-diagram"></i>
-                    <span>Visualisation Graphe</span>
                 </div>
-            </nav>
-
-            <div class="p-4 border-t border-slate-800 text-[10px] text-slate-500">
-                © 2026 - Université Unigraph <br> Département d'Informatique
-            </div>
-        </aside>
-
-        <main class="flex-1 flex flex-col overflow-hidden">
-            <header class="h-16 bg-white border-b flex items-center justify-between px-8 shadow-sm">
-                <div class="flex items-center gap-2 text-slate-600">
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    <span class="text-sm font-medium">Système GraphRAG Connecté</span>
-                </div>
-                <div class="text-sm font-semibold text-slate-500">Groq Llama 3.3 / Neo4j</div>
-            </header>
-
-            <div id="chat-window" class="flex-1 overflow-y-auto p-6 space-y-4">
-                <div class="message-bubble gap-3 max-w-3xl">
-                    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs shrink-0">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-slate-100">
-                        Bonjour Sylvano. Je suis l'assistant Unigraph. Je peux répondre à vos questions sur les cours, les enseignants et les salles.
-                    </div>
-                </div>
-            </div>
-
-            <div id="graph-container" class="absolute inset-0 bg-white z-10 hidden flex flex-col">
-                <div class="p-4 border-b flex justify-between items-center bg-slate-50">
-                    <h2 class="font-bold">Visualisation du Réseau Unigraph</h2>
-                    <button onclick="toggleGraph()" class="text-red-500 hover:text-red-700">
-                        <i class="fas fa-times-circle"></i> Fermer
-                    </button>
-                </div>
-                <div id="mynetwork" class="flex-1"></div>
-            </div>
-            <footer class="p-6 bg-white border-t">
-                <div class="max-w-4xl mx-auto flex gap-4">
-                    <input type="text" id="user-input" 
-                        class="flex-1 bg-slate-100 border-none rounded-xl px-6 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition" 
-                        placeholder="Posez votre question (ex: Qui enseigne le cours INF4038 ?)">
-                    <button id="send-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition shadow-lg shadow-blue-200">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-                <p class="text-center text-[10px] text-slate-400 mt-3 italic">
-                    Projet réalisé par l'équipe Master 1 - Option Systèmes Distribués
+                <h2 class="welcome-title">Bonjour, je suis UNIGRAPH</h2>
+                <p class="welcome-sub">
+                    Votre assistant académique intelligent pour la Faculté des Sciences.<br>
+                    Je réponds à vos questions sur les cours, enseignants, filières et départements.
                 </p>
-            </footer>
-        </main>
-    </div>
+                <div class="welcome-chips">
+                    <button class="welcome-chip" onclick="askSuggestion('Qui dirige le département Informatique ?')">
+                        <i class="fas fa-crown"></i> Chef du département
+                    </button>
+                    <button class="welcome-chip" onclick="askSuggestion('Quels cours sont en M1 Informatique ?')">
+                        <i class="fas fa-book"></i> Cours M1
+                    </button>
+                    <button class="welcome-chip" onclick="askSuggestion('Quelles filières existent ?')">
+                        <i class="fas fa-sitemap"></i> Filières
+                    </button>
+                    <button class="welcome-chip" onclick="askSuggestion('Quelles spécialités en L3 ?')">
+                        <i class="fas fa-flask"></i> Spécialités L3
+                    </button>
+                </div>
+            </div>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+            <!-- Messages générés dynamiquement par script.js -->
+        </div>
+
+        <!-- Visualiseur de graphe (overlay) -->
+        <div class="graph-overlay hidden" id="graph-overlay">
+            <div class="graph-overlay-header">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-project-diagram text-blue-400"></i>
+                    <h2 class="font-semibold text-white">Visualisation du Graphe de Connaissances</h2>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs text-slate-400" id="graph-node-count"></span>
+                    <button onclick="toggleGraph()" class="graph-close-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="graph-legend">
+                <span class="legend-item"><span class="legend-dot" style="background:#60a5fa"></span>Enseignant</span>
+                <span class="legend-item"><span class="legend-dot" style="background:#f87171"></span>UE</span>
+                <span class="legend-item"><span class="legend-dot" style="background:#fbbf24"></span>Étudiant</span>
+                <span class="legend-item"><span class="legend-dot" style="background:#34d399"></span>Département</span>
+                <span class="legend-item"><span class="legend-dot" style="background:#a78bfa"></span>Filière</span>
+                <span class="legend-item"><span class="legend-dot" style="background:#fb923c"></span>Niveau</span>
+                <span class="legend-item"><span class="legend-dot" style="background:#e879f9"></span>Spécialité</span>
+            </div>
+            <div id="mynetwork"></div>
+        </div>
+
+        <!-- Zone de saisie -->
+        <div class="input-area">
+            <div class="input-wrapper">
+                <textarea
+                    id="user-input"
+                    class="chat-input"
+                    placeholder="Posez votre question sur les cours, enseignants, filières..."
+                    rows="1"
+                    onkeydown="handleKeyDown(event)"
+                    oninput="autoResize(this)"
+                ></textarea>
+                <button id="send-btn" class="send-btn" onclick="askQuestion()" title="Envoyer">
+                    <i class="fas fa-paper-plane" id="send-icon"></i>
+                </button>
+            </div>
+            <p class="input-hint">
+                <kbd>Enter</kbd> pour envoyer · <kbd>Shift+Enter</kbd> pour une nouvelle ligne
+            </p>
+        </div>
+
+    </main>
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

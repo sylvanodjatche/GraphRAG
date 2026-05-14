@@ -1,0 +1,24 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5B9BFF"/>
+      <stop offset="100%" stop-color="#1A4FCC"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="512" height="512" rx="96" fill="url(#bg)"/>
+
+  <!-- Arête horizontale : bord droit hub → bord gauche haut-D -->
+  <line x1="204" y1="202" x2="308" y2="202" stroke="white" stroke-width="22" stroke-linecap="round"/>
+
+  <!-- Arête oblique : centre hub → centre bas-D -->
+  <line x1="159" y1="202" x2="353" y2="397" stroke="white" stroke-width="22" stroke-linecap="round"/>
+
+  <!-- Carré hub gauche -->
+  <rect x="114" y="157" width="90" height="90" rx="16" fill="white"/>
+
+  <!-- Carré haut-droite -->
+  <rect x="308" y="157" width="90" height="90" rx="16" fill="white"/>
+
+  <!-- Carré bas-droite -->
+  <rect x="308" y="352" width="90" height="90" rx="16" fill="white"/>
+</svg>
